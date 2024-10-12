@@ -1,0 +1,102 @@
+#include <iostream>
+using namespace std;
+
+const int SIZE = 3;
+char board[SIZE][SIZE] = {{'1', '2', '3'}, {'4', '5', '6'}, {'7', '8', '9'}};
+char currentPlayer = 'X';
+
+// Function to display the board
+void displayBoard() {
+    cout << "-------------\n";
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            cout << "| " << board[i][j] << " ";
+        }
+        cout << "|\n-------------\n";
+    }
+}
+
+// Function to check if there is a winner
+bool checkWin() {
+    // Check rows and columns
+    for (int i = 0; i < SIZE; ++i) {
+        if ((board[i][0] == board[i][1] && board[i][1] == board[i][2]) || // Check rows
+            (board[0][i] == board[1][i] && board[1][i] == board[2][i])) {  // Check columns
+            return true;
+        }
+    }
+
+    // Check diagonals
+    if ((board[0][0] == board[1][1] && board[1][1] == board[2][2]) ||  // Main diagonal
+        (board[0][2] == board[1][1] && board[1][1] == board[2][0])) {  // Secondary diagonal
+        return true;
+    }
+
+    return false;
+}
+
+// Function to check if the board is full (draw)
+bool checkDraw() {
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            if (board[i][j] != 'X' && board[i][j] != 'O') {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+// Function to switch the player
+void switchPlayer() {
+    currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+}
+
+// Function to make a move
+bool makeMove(int position) {
+    int row = (position - 1) / SIZE;
+    int col = (position - 1) % SIZE;
+
+    if (board[row][col] != 'X' && board[row][col] != 'O') {
+        board[row][col] = currentPlayer;
+        return true;
+    } else {
+        cout << "Invalid move! Try again.\n";
+        return false;
+    }
+}
+
+int main() {
+    int position;
+    bool gameWon = false;
+
+    while (true) {
+        displayBoard();
+        cout << "Player " << currentPlayer << ", enter your move (1-9): ";
+        cin >> position;
+
+        if (position < 1 || position > 9) {
+            cout << "Invalid input! Please enter a number between 1 and 9.\n";
+            continue;
+        }
+
+        if (makeMove(position)) {
+            if (checkWin()) {
+                displayBoard();
+                cout << "Player " << currentPlayer << " wins!\n";
+                gameWon = true;
+                break;
+            }
+
+            if (checkDraw()) {
+                displayBoard();
+                cout << "It's a draw!\n";
+                break;
+            }
+
+            switchPlayer();
+        }
+    }
+
+    return 0;
+}
